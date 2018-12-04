@@ -1,13 +1,13 @@
-# Project Name
-**Authors**: Jhon Doe (jd2545), Mark Smith (ms4568)
+# NYC Restaurant Inspection
+**Authors**: Amoli Vani (anv282), Shradha Taneja (st3277)
 
-Group X (Online: Group Y) 
+Group 12 
 
 ![Screenhot](screenshot.jpg)
 
 
 ## About
-In this project we ...
+In this project ..
 
 ## More
 [DEMO](https://nyu-vis-fall2018.github.io/project-template/)
