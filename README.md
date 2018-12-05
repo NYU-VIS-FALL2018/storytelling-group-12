@@ -12,6 +12,6 @@ In this project our main goal is to find restaurants in different boroughs depen
 https://drive.google.com/file/d/1avauD1aHVcLL856sywvukLC8mw0_IJ6t/view?usp=sharing
 
 ## More
-[DEMO](https://github.com/NYU-VIS-FALL2018/storytelling-group-12/)
+[DEMO](https://nyu-vis-fall2018.github.io/storytelling-group-12/)
 
 [Project Description](project.pdf)
