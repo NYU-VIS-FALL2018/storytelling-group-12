@@ -14,4 +14,4 @@ https://drive.google.com/file/d/1avauD1aHVcLL856sywvukLC8mw0_IJ6t/view?usp=shari
 ## More
 [DEMO](https://github.com/NYU-VIS-FALL2018/storytelling-group-12/)
 
-[Project Description](project.pdf)
+[Project Description](Group 12 Proposal.pdf)
