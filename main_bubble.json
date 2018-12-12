@@ -1,0 +1,38 @@
+{"name":"bubble", "children": [
+{"name":"Queens",
+"children":[
+    {"name": "BROADWAY"},
+    {"name": "ROOSEVELT AVENUE"},
+    {"name": "NORTHERN BOULEVARD"}
+]},
+{"name": "Brooklyn",
+"children":[
+    {"name": "BROADWAY"},
+    {"name": "3 AVENUE"},
+    {"name": "2 AVENUE"},
+    {"name": "5 AVENUE"},
+    {"name": "8 AVENUE"},
+    {"name": "1 AVENUE"},
+    {"name": "7 AVENUE"}
+]},
+{"name":"Manhattan",
+"children":[
+    {"name": "BROADWAY"},
+    {"name": "3 AVENUE"},
+    {"name": "2 AVENUE"},
+    {"name": "5 AVENUE"},
+    {"name": "8 AVENUE"},
+    {"name": "7 AVENUE"},
+    {"name": "LEXINGTON AVENUE"}
+]},
+{"name":"Bronx",
+"children":[
+    {"name": "BROADWAY"},
+    {"name": "3 AVENUE"}
+]},
+
+{"name":"Staten Island",
+"children":[
+    {"name":"BROADWAY"}
+]}
+]}
