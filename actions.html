@@ -63,37 +63,41 @@ body { margin:0;top:0;right:0;bottom:0;left:0; text-align: center; }
 
 var data = {
   labels: [
-    'Establishment closed by DOHMH', 'Establishment re-closed by DOHMH', 'Establishment re-opened by DOHMH',
-    'No violations were recorded at the time of this inspection'
+    '% of Establishment in Borough closed by DOHMH', '% of Establishment in Borough Establishment re-closed by DOHMH', '% of Establishment in Borough Establishment re-opened by DOHMH',
+    '% of Establishment in Borough No violations were recorded at the time of this inspection'
   ],
   series: [
     {
       label: 'Manhattan',
-      values: [3252, 283, 928, 2004]
+      values: [50.29, 4.38, 14.35, 30.99]
+      // values: [3252, 283, 928, 2004]
     },
     {
       label: 'Brooklyn',
-      values: [2741, 238, 808, 1512]
+      // values: [2741, 238, 808, 1512]
+      values: [51.73, 4.49, 15.25, 28.53]
     },
     {
       label: 'Bronx',
-      values: [881, 89, 292, 476]
+      // values: [881, 89, 292, 476]
+      values: [50.69, 5.12, 16.8, 27.39]
     },
     {
       label: 'Queens',
-      values: [2086, 190, 602, 1227]
+      values: [50.82, 4.63, 14.67, 29.89]
     },
     {
       label: 'Staten Island',
-      values: [280, 25, 83, 154]
+      // values: [280, 25, 83, 154]
+      values: [51.66, 4.61, 15.31, 28.41]
     }]
 };
 
-var chartWidth       = 450,
+var chartWidth       = 500,
     barHeight        = 20,
     groupHeight      = barHeight * data.series.length,
     gapBetweenGroups = 30,
-    spaceForLabels   = 375,
+    spaceForLabels   = 560,
     spaceForLegend   = 200;
 
 // Zip the series data together (first values, second values, etc.)
