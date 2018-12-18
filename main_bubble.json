@@ -1,38 +1,40 @@
 {"name":"bubble", "children": [
-{"name":"Queens",
+{"name":"Queens [3609]",
 "children":[
-    {"name": "BROADWAY"},
-    {"name": "ROOSEVELT AVENUE"},
-    {"name": "NORTHERN BOULEVARD"}
+    {"name": "BROADWAY [1131]"},
+    {"name": "ROOSEVELT AVENUE [1287]"},
+    {"name": "NORTHERN BOULEVARD [1191]"}
 ]},
-{"name": "Brooklyn",
+{"name": "Brooklyn [3497]",
 "children":[
-    {"name": "BROADWAY"},
-    {"name": "3 AVENUE"},
-    {"name": "2 AVENUE"},
-    {"name": "5 AVENUE"},
-    {"name": "8 AVENUE"},
-    {"name": "1 AVENUE"},
-    {"name": "7 AVENUE"}
+    {"name": "BROADWAY [586]"},
+    {"name": "3 AVENUE [721]"},
+    {"name": "2 AVENUE [55]"},
+    {"name": "5 AVENUE [1292]"},
+    {"name": "8 AVENUE [377]"},
+    {"name": "1 AVENUE [7]"},
+    {"name": "7 AVENUE [459]"}
 ]},
-{"name":"Manhattan",
+{"name":"Manhattan [11394]",
 "children":[
-    {"name": "BROADWAY"},
-    {"name": "3 AVENUE"},
-    {"name": "2 AVENUE"},
-    {"name": "5 AVENUE"},
-    {"name": "8 AVENUE"},
-    {"name": "7 AVENUE"},
-    {"name": "LEXINGTON AVENUE"}
+    {"name": "BROADWAY [3754]"},
+    {"name": "3 AVENUE [1325]"},
+    {"name": "2 AVENUE [1538]"},
+    {"name": "5 AVENUE [547]"},
+    {"name": "8 AVENUE [966]"},
+    {"name": "7 AVENUE [870]"},
+    {"name": "LEXINGTON AVENUE [1298]"},
+    {"name": "1 AVENUE [1096]"}
+
 ]},
-{"name":"Bronx",
+{"name":"Bronx [377]",
 "children":[
-    {"name": "BROADWAY"},
-    {"name": "3 AVENUE"}
+    {"name": "BROADWAY [212]"},
+    {"name": "3 AVENUE [165]"}
 ]},
 
-{"name":"Staten Island",
+{"name":"Staten Island [14]",
 "children":[
-    {"name":"BROADWAY"}
+    {"name":"BROADWAY [14]"}
 ]}
 ]}
