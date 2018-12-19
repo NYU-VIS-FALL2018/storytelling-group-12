@@ -15,7 +15,7 @@
     {"name": "1 AVENUE [7]"},
     {"name": "7 AVENUE [459]"}
 ]},
-{"name":"Manhattan [11394]",
+{"name":"Manhattan [10298]",
 "children":[
     {"name": "BROADWAY [3754]"},
     {"name": "3 AVENUE [1325]"},
@@ -23,8 +23,7 @@
     {"name": "5 AVENUE [547]"},
     {"name": "8 AVENUE [966]"},
     {"name": "7 AVENUE [870]"},
-    {"name": "LEXINGTON AVENUE [1298]"},
-    {"name": "1 AVENUE [1096]"}
+    {"name": "LEXINGTON AVENUE [1298]"}
 
 ]},
 {"name":"Bronx [377]",

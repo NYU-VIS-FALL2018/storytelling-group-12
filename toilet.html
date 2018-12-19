@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <script src="https://d3js.org/d3.v4.min.js"></script>
+<style>
+/*body{
+    width:1060px;
+    margin:50px auto;
+}*/
+body { margin:0;top:0;right:0;bottom:0;left:0; text-align: center; }
+
+    h1 {
+            background-color: #C0C0C0;
+            color: white;
+            padding: 5px;
+
+        }
+
+        .mainView {
+            display: flex;
+        }
+path {  stroke: #fff; }
+path:hover {  opacity:0.9; }
+rect:hover {  fill:blue; }
+.axis {  font: 10px sans-serif; }
+.legend tr{    border-bottom:1px solid grey; }
+.legend tr:first-child{    border-top:1px solid grey; }
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.x.axis path {  display: none; }
+.legend{
+    margin-bottom:76px;
+    display:inline-block;
+    border-collapse: collapse;
+    border-spacing: 0px;
+}
+.legend td{
+    padding:4px 5px;
+    vertical-align:bottom;
+}
+.legendFreq, .legendPerc{
+    align:right;
+    width:50px;
+}
+
+</style>
+</head>
+
+<body>
+  <h1>NYC Restaurants Inspections</h1>
+  <h2>Toilet violations across boroughs</h2>
+  
+  <script>
+function dashboard(id, fData){
+    var barColor = 'steelblue';
+    function segColor(c){ return {Manhattan:"#FF4D4D", Brooklyn:"#FFA64D",Bronx:"#336ABA", Queens:"#70C6CE", SI:"#228B22"}[c]; }
+    
+    // compute total for each state.
+    fData.forEach(function(d){d.total=d.freq.Manhattan+d.freq.Brooklyn+d.freq.Bronx+d.freq.Queens+d.freq.SI;});
+    
+    // function to handle pieChart.
+    function pieChart(pD){
+        var pC ={},    pieDim ={w:250, h: 250};
+        pieDim.r = Math.min(pieDim.w, pieDim.h) / 2;
+                
+        // create svg for pie chart.
+        var piesvg = d3.select(id).append("svg")
+            .attr("width", pieDim.w).attr("height", pieDim.h).append("g")
+            .attr("transform", "translate("+pieDim.w/2+","+pieDim.h/2+")");
+        
+        // create function to draw the arcs of the pie slices.
+        var arc = d3.svg.arc().outerRadius(pieDim.r - 10).innerRadius(0);
+
+        // create a function to compute the pie slice angles.
+        var pie = d3.layout.pie().sort(null).value(function(d) { return d.freq; });
+
+        // Draw the pie slices.
+        piesvg.selectAll("path").data(pie(pD)).enter().append("path").attr("d", arc)
+            .each(function(d) { this._current = d; })
+            .style("fill", function(d) { return segColor(d.data.type); })
+            .on("mouseover",mouseover).on("mouseout",mouseout);
+
+        // create function to update pie-chart. This will be used by histogram.
+        pC.update = function(nD){
+            piesvg.selectAll("path").data(pie(nD)).transition().duration(500)
+                .attrTween("d", arcTween);
+        }        
+        // Utility function to be called on mouseover a pie slice.
+        function mouseover(d){
+            // call the update function of histogram with new data.
+            hG.update(fData.map(function(v){ 
+                return [v.State,v.freq[d.data.type]];}),segColor(d.data.type));
+        }
+        //Utility function to be called on mouseout a pie slice.
+        function mouseout(d){
+            // call the update function of histogram with all data.
+            hG.update(fData.map(function(v){
+                return [v.State,v.total];}), barColor);
+        }
+        // Animating the pie-slice requiring a custom function which specifies
+        // how the intermediate paths should be drawn.
+        function arcTween(a) {
+            var i = d3.interpolate(this._current, a);
+            this._current = i(0);
+            return function(t) { return arc(i(t));    };
+        }    
+        return pC;
+    }
+    
+    // function to handle legend.
+    function legend(lD){
+        var leg = {};
+            
+        // create table for legend.
+        var legend = d3.select(id).append("table").attr('class','legend');
+        
+        // create one row per segment.
+        var tr = legend.append("tbody").selectAll("tr").data(lD).enter().append("tr");
+            
+        // create the first column for each segment.
+        tr.append("td").append("svg").attr("width", '16').attr("height", '16').append("rect")
+            .attr("width", '16').attr("height", '16')
+      .attr("fill",function(d){ return segColor(d.type); });
+            
+        // create the second column for each segment.
+        tr.append("td").text(function(d){ return d.type;});
+
+        // create the third column for each segment.
+        tr.append("td").attr("class",'legendFreq')
+            .text(function(d){ return d3.format(",")(d.freq);});
+
+        // create the fourth column for each segment.
+        tr.append("td").attr("class",'legendPerc')
+            .text(function(d){ return getLegend(d,lD);});
+
+        // Utility function to be used to update the legend.
+        leg.update = function(nD){
+            // update the data attached to the row elements.
+            var l = legend.select("tbody").selectAll("tr").data(nD);
+
+            // update the frequencies.
+            l.select(".legendFreq").text(function(d){ return d3.format(",")(d.freq);});
+
+            // update the percentage column.
+            l.select(".legendPerc").text(function(d){ return getLegend(d,nD);});        
+        }
+        
+        function getLegend(d,aD){ // Utility function to compute percentage.
+            return d3.format("%")(d.freq/d3.sum(aD.map(function(v){ return v.freq; })));
+        }
+
+        return leg;
+    }
+    
+    // calculate total frequency by segment for all state.
+    var tF = ['Manhattan','Brooklyn','Bronx', 'Queens', 'SI'].map(function(d){ 
+        return {type:d, freq: d3.sum(fData.map(function(t){ return t.freq[d];}))}; 
+    });    
+    
+    // calculate total frequency by state for all segment.
+    var sF = fData.map(function(d){return [d.State,d.total];});
+
+    var pC = pieChart(tF), // create the pie-chart.
+        leg= legend(tF);  // create the legend.
+}
+</script>
+
+<script>
+var freqData=[
+{State:'American',freq:{Manhattan: 47710, Brooklyn:19675, Bronx:5766, Queens:15033, SI:3323}}
+,{State:'Bakery',freq:{Manhattan:3462, Brooklyn:3456, Bronx:1202, Queens:3463, SI:365}}
+,{State:'Cafe',freq:{Manhattan:8092, Brooklyn:4422, Bronx:691, Queens:2211, SI:152}}
+,{State:'Caribbean',freq:{Manhattan:708, Brooklyn:6695, Bronx:1923, Queens:3652, SI:43}}
+,{State:'Chinese',freq:{Manhattan:11007, Brooklyn:13069, Bronx:4264, Queens:12791, SI:1190}}
+,{State:'Italian',freq:{Manhattan:10393, Brooklyn:2850, Bronx:919, Queens:2217, SI:1353}}
+,{State:'Japanese',freq:{Manhattan:8502, Brooklyn:3001, Bronx:298, Queens:2111, SI:561}}
+,{State:'Latin',freq:{Manhattan:4222, Brooklyn:3787, Bronx:3808, Queens:7113, SI:205}}
+,{State:'Mexican',freq:{Manhattan:5234, Brooklyn:4484, Bronx:1842, Queens:3094, SI:563}}
+,{State:'Pizza',freq:{Manhattan:5570, Brooklyn:4945, Bronx:2924, Queens:4437, SI:878}}
+];
+
+dashboard('#dashboard',freqData);
+</script>
+
+
+  <h2> Do you want to see some more violations?</h2>
+  <button type="button" onClick="window.location='ratVio.html'">Click Me!</button>
+  
+
+
+</body>
