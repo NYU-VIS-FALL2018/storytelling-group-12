@@ -1,9 +1,8 @@
 <!DOCTYPE html>
-<head>
-  <meta charset="utf-8">
-  <script src="https://d3js.org/d3.v4.min.js"></script>
-  <style>
-    body { margin:0;top:0;right:0;bottom:0;left:0; text-align: center; }
+<meta charset="utf-8">
+<style>
+
+body { margin:0;top:0;right:0;bottom:0;left:0; text-align: center; }
 
     h1 {
             background-color: #C0C0C0;
@@ -15,72 +14,136 @@
         .mainView {
             display: flex;
         }
+path {  stroke: #fff; }
+path:hover {  opacity:0.9; }
+/*rect:hover {  fill:blue; }*/
+.axis {  font: 10px sans-serif; }
+.legend tr{    border-bottom:1px solid grey; }
+.legend tr:first-child{    border-top:1px solid grey; }
 
-  </style>
-</head>
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
 
+.x.axis path {  display: none; }
+.legend{
+    margin-bottom:76px;
+    display:inline-block;
+    border-collapse: collapse;
+    border-spacing: 0px;
+}
+.legend td{
+    padding:4px 5px;
+    vertical-align:bottom;
+}
+.legendFreq, .legendPerc{
+    align:right;
+    width:50px;
+}
+
+</style>
 <body>
   <h1>NYC Restaurants Inspections</h1>
   <h2>Toilet violations across boroughs</h2>
-  <script>
-    var data = [
-      {name: 'Manhattan', count: 73, percentage: 42.94, color: '#FF4D4D'},
-      {name: 'Brooklyn', count: 32, percentage: 18.82, color: '#FFA64D'},
-      {name: 'Queens', count: 40, percentage: 23.53, color: '#70C6CE'},
-      {name: 'Bronx', count: 18, percentage: 10.59, color: '#336ABA'},
-      {name: 'Staten Island', count: 7, percentage: 4.12, color: '#228B22'},
-    ];
+<div id='dashboard'>
+</div>
+<script src="https://d3js.org/d3.v3.min.js"></script>
+<script>
+function dashboard(id, fData){
+    var barColor = 'steelblue';
+    function segColor(c){ return {Manhattan:"#FF4D4D", Brooklyn:"#FFA64D",Bronx:"#336ABA", Queens:"#70C6CE", SI:"#228B22"}[c]; }
     
-    var width = 540,
-    height = 540,
-    radius = 200;
+    fData.forEach(function(d){d.total=d.freq.Manhattan+d.freq.Brooklyn+d.freq.Bronx+d.freq.Queens+d.freq.SI;});
+    
+    function pieChart(pD){
+        var pC ={},    pieDim ={w:350, h: 350};
+        pieDim.r = Math.min(pieDim.w, pieDim.h) / 2;
+                
+        var piesvg = d3.select(id).append("svg")
+            .attr("width", pieDim.w).attr("height", pieDim.h).append("g")
+            .attr("transform", "translate("+pieDim.w/2+","+pieDim.h/2+")");
+        
+        var arc = d3.svg.arc().outerRadius(pieDim.r - 10).innerRadius(0);
 
-		var arc = d3.arc()
-    	.outerRadius(radius - 10)
-    	.innerRadius(0);
+        var pie = d3.layout.pie().sort(null).value(function(d) { return d.freq; });
 
-		var pie = d3.pie()
-	    .sort(null)
-	    .value(function(d) {
-	        return d.count;
-	    });
+        piesvg.selectAll("path").data(pie(pD)).enter().append("path").attr("d", arc)
+            .each(function(d) { this._current = d; })
+            .style("fill", function(d) { return segColor(d.data.type); })
+            .on("mouseover",mouseover).on("mouseout",mouseout);
 
-		var svg = d3.select('body').append("svg")
-	    .attr("width", width)
-	    .attr("height", height)
-	    .append("g")
-	    .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
-
-    var g = svg.selectAll(".arc")
-      .data(pie(data))
-      .enter().append("g");    
-
-   	g.append("path")
-    	.attr("d", arc)
-      .style("fill", function(d,i) {
-      	return d.data.color;
-      });
-
-    g.append("text")
-    	.attr("transform", function(d) {
-        var _d = arc.centroid(d);
-        _d[0] *= 2.2;	//multiply by a constant factor
-        _d[1] *= 2.2;	//multiply by a constant factor
-        return "translate(" + _d + ")";
-      })
-      .attr("dy", ".50em")
-      .style("text-anchor", "middle")
-      .text(function(d) {
-        if(d.data.percentage < 8) {
-          return '';
+        pC.update = function(nD){
+            piesvg.selectAll("path").data(pie(nD)).transition().duration(500)
+                .attrTween("d", arcTween);
+        }        
+        function mouseover(d){
+            hG.update(fData.map(function(v){ 
+                return [v.State,v.freq[d.data.type]];}),segColor(d.data.type));
         }
-        return d.data.percentage + '%';
-      });
+        function mouseout(d){
+            hG.update(fData.map(function(v){
+                return [v.State,v.total];}), barColor);
+        }
 
-  </script>
-  <h2> Do you want to see some more violations?</h2>
+        function arcTween(a) {
+            var i = d3.interpolate(this._current, a);
+            this._current = i(0);
+            return function(t) { return arc(i(t));    };
+        }    
+        return pC;
+    }
+    
+    function legend(lD){
+        var leg = {};
+            
+        var legend = d3.select(id).append("table").attr('class','legend');
+        
+        var legendBody = legend.append("tbody");
+        var trows = legendBody.selectAll("tr");
+        var tr = trows.data(lD).enter().append("tr");
+
+            
+        tr.append("td").append("svg").attr("width", '16').attr("height", '16').append("rect")
+            .attr("width", '16').attr("height", '16')
+      .attr("fill",function(d){ return segColor(d.type); });
+            
+        tr.append("td").text(function(d){ return d.type;});
+
+        tr.append("td").text(function(d){ return d.freq + "%"; });
+
+        return leg;
+    }
+    
+    var tF = ['Manhattan','Brooklyn','Bronx', 'Queens', 'SI'].map(function(d){ 
+        return {type:d, freq: d3.sum(fData.map(function(t){ return t.freq[d];}))}; 
+    });    
+
+    var sF = fData.map(function(d){return [d.State,d.total];});
+
+    var pC = pieChart(tioData), // create the pie-chart.
+        leg= legend(tioData);  // create the legend.
+}
+</script>
+
+<script>
+var tioData=[
+{'type': 'Manhattan', freq: 42.9}
+,{'type': 'Brooklyn', freq: 18.82}
+,{'type': 'Queens', freq: 23.53}
+,{'type': 'Bronx', freq: 10.59}
+,{'type': 'SI', freq: 4.12}
+];
+
+dashboard('#dashboard',tioData);
+</script>
+<br>
+<br>
+<br>
+ <h2> Do you want to see some more violations?</h2>
   <button type="button" onClick="window.location='ratVio.html'">Click Me!</button>
   
 
-
-</body>
+  </body>
